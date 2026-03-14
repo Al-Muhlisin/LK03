@@ -11,9 +11,9 @@ public class FoodProduct extends Product {
     @Override
     public double calculateDiscount() {
         if (getStockQuantity() > 10) {
-            return 0.1; 
+            return getPrice() * 0.1; // 10% discount based on price
         } else {
-            return 0.0; 
+            return 0.0; // no discount
         }
     }
 
