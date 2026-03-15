@@ -103,32 +103,15 @@ Array bertipe `Product[]` digunakan untuk menyimpan berbagai jenis produk dan me
 
 ## 🔄 Mekanisme Program Saat Ini
 
-### Alur di `ShopManagementSystem` (Main Program)
+### Alur di ShopManagementSystem
+Inisialisasi: Menjalankan seedInitialData() untuk mengisi stok awal toko.
+Menu Utama: Loop interaktif untuk mengelola stok atau memulai simulasi penjualan.
+Pencarian Produk: Mencari indeks produk berdasarkan productId secara case-insensitive.
+Checkout: Mengintegrasikan input user dengan objek Transaction untuk memproses pembayaran.
 
-1. Menampilkan menu utama berbasis `Scanner`:
-	 * Tambah produk
-	 * Tampilkan produk
-	 * Update stok
-	 * Simulasi transaksi
-2. Menyimpan produk pada array `Product[]` secara polymorphic.
-3. Untuk transaksi, `ShopManagementSystem` hanya:
-	 * menerima input ID produk dan kuantitas,
-	 * memanggil `transaction.addItem(...)`,
-	 * mengeksekusi checkout melalui `transaction.processCheckout()`,
-	 * menampilkan struk melalui `transaction.printReceipt()`.
-
-### Tanggung Jawab Class `Transaction`
-
-* Menyimpan daftar item transaksi dan jumlahnya.
-* Mendukung overloading:
-	* `addItem(Product item)`
-	* `addItem(Product item, int quantity)`
-* Menghitung:
-	* subtotal,
-	* total diskon,
-	* total bayar.
-* Mengecek kecukupan stok saat checkout.
-* Mengurangi stok produk setelah checkout berhasil.
-* Mencetak struk transaksi.
-
+### Tanggung Jawab Class Transaction
+Manajemen Keranjang: Menggunakan ArrayList untuk menyimpan daftar produk dan kuantitasnya.
+Validasi Stok: Method processCheckout() memastikan stok tersedia sebelum transaksi diselesaikan.
+Pembaruan Stok Otomatis: Mengurangi stok produk secara otomatis setelah transaksi berhasil dengan menyertakan alasan (ID Transaksi).
+Kalkulasi Finansial: Menghitung total diskon dan total harga akhir yang harus dibayar pelanggan secara real-time.
 ---
