@@ -83,6 +83,8 @@ Beberapa method menggunakan overloading, seperti:
 * `addItem(Product item)`
 * `addItem(Product item, int quantity)`
 
+Method `addItem(...)` berada pada class `Transaction` untuk mendukung penambahan item transaksi 1 produk maupun banyak produk sekaligus.
+
 ### 5️⃣ Polymorphism
 
 Array bertipe `Product[]` digunakan untuk menyimpan berbagai jenis produk dan memprosesnya secara polymorphic.
@@ -93,8 +95,40 @@ Array bertipe `Product[]` digunakan untuk menyimpan berbagai jenis produk dan me
 
 * Manajemen berbagai jenis produk
 * Perhitungan diskon berdasarkan kategori produk
-* Simulasi transaksi penjualan
+* Simulasi transaksi penjualan berbasis class `Transaction`
 * Perhitungan total harga setelah diskon
 * Pengelolaan stok produk
+
+---
+
+## 🔄 Mekanisme Program Saat Ini
+
+### Alur di `ShopManagementSystem` (Main Program)
+
+1. Menampilkan menu utama berbasis `Scanner`:
+	 * Tambah produk
+	 * Tampilkan produk
+	 * Update stok
+	 * Simulasi transaksi
+2. Menyimpan produk pada array `Product[]` secara polymorphic.
+3. Untuk transaksi, `ShopManagementSystem` hanya:
+	 * menerima input ID produk dan kuantitas,
+	 * memanggil `transaction.addItem(...)`,
+	 * mengeksekusi checkout melalui `transaction.processCheckout()`,
+	 * menampilkan struk melalui `transaction.printReceipt()`.
+
+### Tanggung Jawab Class `Transaction`
+
+* Menyimpan daftar item transaksi dan jumlahnya.
+* Mendukung overloading:
+	* `addItem(Product item)`
+	* `addItem(Product item, int quantity)`
+* Menghitung:
+	* subtotal,
+	* total diskon,
+	* total bayar.
+* Mengecek kecukupan stok saat checkout.
+* Mengurangi stok produk setelah checkout berhasil.
+* Mencetak struk transaksi.
 
 ---

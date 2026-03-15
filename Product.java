@@ -26,6 +26,9 @@ public abstract class Product {
     public String getName() {
          return name; 
     }
+    public String getProductId() {
+        return productId;
+    }
     public double getPrice() { 
         return price; 
     }
