@@ -114,4 +114,5 @@ Manajemen Keranjang: Menggunakan ArrayList untuk menyimpan daftar produk dan kua
 Validasi Stok: Method processCheckout() memastikan stok tersedia sebelum transaksi diselesaikan.
 Pembaruan Stok Otomatis: Mengurangi stok produk secara otomatis setelah transaksi berhasil dengan menyertakan alasan (ID Transaksi).
 Kalkulasi Finansial: Menghitung total diskon dan total harga akhir yang harus dibayar pelanggan secara real-time.
+
 ---
