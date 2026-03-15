@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 public class ShopManagementSystem {
+    // Tetap menggunakan Array standar sesuai permintaan
     private static final int MAX_PRODUCTS = 100;
     private static final Product[] products = new Product[MAX_PRODUCTS];
     private static int productCount = 0;
@@ -62,7 +63,6 @@ public class ShopManagementSystem {
         int stock = inputInt(scanner, "Masukkan stok awal: ");
 
         Product newProduct;
-
         switch (type) {
             case 1 -> {
                 String expiryDate = inputString(scanner, "Masukkan tanggal kedaluwarsa: ");
@@ -101,22 +101,16 @@ public class ShopManagementSystem {
             product.getProductInfo();
             System.out.printf("   Diskon per item: %.2f%n", product.calculateDiscount());
 
-            switch (product) {
-                case FoodProduct food -> System.out.println("   Expired Date: " + food.getExpiryDate());
-                case ElectronicProduct electronic -> System.out.println("   Garansi: " + electronic.getWarrantyPeriod());
-                default -> {
-                }
+            if (product instanceof FoodProduct food) {
+                System.out.println("   Expired Date: " + food.getExpiryDate());
+            } else if (product instanceof ElectronicProduct electronic) {
+                System.out.println("   Garansi: " + electronic.getWarrantyPeriod());
             }
         }
     }
 
     private static void updateProductStock(Scanner scanner) {
         System.out.println("\n--- Update Stok Produk ---");
-        if (productCount == 0) {
-            System.out.println("Belum ada produk.");
-            return;
-        }
-
         String id = inputString(scanner, "Masukkan ID produk: ");
         int index = findProductIndexById(id);
 
@@ -129,116 +123,78 @@ public class ShopManagementSystem {
         int quantity = inputInt(scanner, "Masukkan jumlah perubahan stok (+/-): ");
 
         if (product.getStockQuantity() + quantity < 0) {
-            System.out.println("Update ditolak. Stok tidak boleh negatif.");
+            System.out.println("Stok tidak boleh negatif.");
             return;
         }
 
-        String useReason = inputString(scanner, "Tambahkan alasan update? (y/n): ");
+        String useReason = inputString(scanner, "Tambahkan alasan? (y/n): ");
         if (useReason.equalsIgnoreCase("y")) {
-            String reason = inputString(scanner, "Masukkan alasan: ");
-            product.updateStock(quantity, reason);
+            product.updateStock(quantity, inputString("Alasan: "));
         } else {
             product.updateStock(quantity);
         }
-
-        System.out.println("Stok berhasil diperbarui. Stok saat ini: " + product.getStockQuantity());
     }
 
     private static void processTransaction(Scanner scanner) {
         System.out.println("\n--- Simulasi Transaksi ---");
         if (productCount == 0) {
-            System.out.println("Belum ada produk.");
+            System.out.println("Stok produk kosong.");
             return;
         }
-
-        showAllProducts();
 
         Transaction transaction = new Transaction();
 
         while (true) {
-            String id = inputString(scanner, "Masukkan ID produk yang dibeli: ");
+            String id = inputString(scanner, "Masukkan ID produk: ");
             int index = findProductIndexById(id);
 
             if (index == -1) {
                 System.out.println("Produk tidak ditemukan.");
             } else {
-                Product product = products[index];
-                int quantity = inputInt(scanner, "Masukkan jumlah beli: ");
+                Product p = products[index];
+                int qty = inputInt(scanner, "Jumlah beli: ");
 
-                if (quantity <= 0) {
-                    System.out.println("Jumlah beli harus lebih dari 0.");
-                } else if (quantity > product.getStockQuantity()) {
-                    System.out.println("Stok tidak mencukupi.");
-                } else if (quantity == 1) {
-                    transaction.addItem(product);
-                    System.out.println("Item ditambahkan ke transaksi.");
+                if (qty > 0 && qty <= p.getStockQuantity()) {
+                    // Mendukung Overloading addItem
+                    if (qty == 1) transaction.addItem(p);
+                    else transaction.addItem(p, qty);
+                    System.out.println("Berhasil ditambah ke keranjang.");
                 } else {
-                    transaction.addItem(product, quantity);
-                    System.out.println("Item ditambahkan ke transaksi.");
+                    System.out.println("Gagal. Stok tidak cukup atau input salah.");
                 }
             }
 
-            String addMore = inputString(scanner, "Tambah item lain? (y/n): ");
-            if (!addMore.equalsIgnoreCase("y")) {
-                break;
-            }
+            if (!inputString(scanner, "Tambah lagi? (y/n): ").equalsIgnoreCase("y")) break;
         }
 
-        if (transaction.getItemCount() == 0) {
-            System.out.println("Transaksi dibatalkan karena tidak ada item valid.");
-            return;
+        if (transaction.getItemCount() > 0 && transaction.processCheckout()) {
+            System.out.printf("Total Bayar: %.2f%n", transaction.processSale());
+            transaction.printReceipt();
         }
-
-        if (!transaction.processCheckout()) {
-            System.out.println("Transaksi gagal diproses.");
-            return;
-        }
-
-        transaction.printReceipt();
     }
 
     private static int findProductIndexById(String id) {
         for (int i = 0; i < productCount; i++) {
-            if (products[i].getProductId().equalsIgnoreCase(id)) {
-                return i;
-            }
+            if (products[i].getProductId().equalsIgnoreCase(id)) return i;
         }
         return -1;
     }
 
-    private static int inputInt(Scanner scanner, String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String input = scanner.nextLine();
-            try {
-                return Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Input harus berupa angka bulat.");
-            }
-        }
+    private static int inputInt(Scanner s, String p) {
+        System.out.print(p);
+        try { return Integer.parseInt(s.nextLine()); } catch (Exception e) { return 0; }
     }
-
-    private static double inputDouble(Scanner scanner, String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String input = scanner.nextLine();
-            try {
-                return Double.parseDouble(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Input harus berupa angka (contoh: 10000 atau 10000.5).");
-            }
-        }
+    private static double inputDouble(Scanner s, String p) {
+        System.out.print(p);
+        try { return Double.parseDouble(s.nextLine()); } catch (Exception e) { return 0; }
     }
-
-    private static String inputString(Scanner scanner, String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String input = scanner.nextLine().trim();
-            if (!input.isEmpty()) {
-                return input;
-            }
-            System.out.println("Input tidak boleh kosong.");
-        }
+    private static String inputString(Scanner s, String p) {
+        System.out.print(p);
+        return s.nextLine();
+    }
+    private static String inputString(String p) {
+        System.out.print(p);
+        return new Scanner(System.in).nextLine();
     }
 
     private static void seedInitialData() {
