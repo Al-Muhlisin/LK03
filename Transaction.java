@@ -1,28 +1,15 @@
+import java.util.ArrayList;
+
 public class Transaction {
     private static int transactionCounter = 1;
-
-    private final String transactionId;
-    private final Product[] items;
-    private final int[] quantities;
-    private int itemCount;
+    private String transactionId;
+    private ArrayList<Product> items;
+    private ArrayList<Integer> quantities;
 
     public Transaction() {
-        this("TRX-" + transactionCounter++, 50);
-    }
-
-    public Transaction(String transactionId, int maxItems) {
-        this.transactionId = transactionId;
-        this.items = new Product[maxItems];
-        this.quantities = new int[maxItems];
-        this.itemCount = 0;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public int getItemCount() {
-        return itemCount;
+        this.transactionId = "TRX-" + transactionCounter++;
+        this.items = new ArrayList<>();
+        this.quantities = new ArrayList<>();
     }
 
     public void addItem(Product item) {
@@ -30,11 +17,39 @@ public class Transaction {
     }
 
     public void addItem(Product item, int quantity) {
-        if (item == null || quantity <= 0) {
-            return;
+        int existingIndex = -1;
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getProductId().equals(item.getProductId())) {
+                existingIndex = i;
+                break;
+            }
         }
 
-        int existingIndex = findItemIndex(item.getProductId());
+        if (existingIndex != -1) {
+            quantities.set(existingIndex, quantities.get(existingIndex) + quantity);
+        } else {
+            items.add(item);
+            quantities.add(quantity);
+        }
+    }
+
+    public double processSale() {
+        double total = 0;
+        for (int i = 0; i < items.size(); i++) {
+            double priceAfterDiscount = items.get(i).getPrice() - items.get(i).calculateDiscount();
+            total += priceAfterDiscount * quantities.get(i);
+        }
+        return total;
+    }
+
+    public void printReceipt() {
+        System.out.println("\n--- STRUK PEMBELIAN ---");
+        for (int i = 0; i < items.size(); i++) {
+            System.out.printf("%s x%d : %.2f%n", items.get(i).getName(), quantities.get(i), items.get(i).getPrice());
+        }
+        System.out.printf("TOTAL BAYAR: %.2f%n", processSale());
+    }
+}        int existingIndex = findItemIndex(item.getProductId());
         if (existingIndex != -1) {
             quantities[existingIndex] += quantity;
             return;
