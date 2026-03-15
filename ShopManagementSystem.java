@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
 public class ShopManagementSystem {
-    // Tetap menggunakan Array standar sesuai permintaan
     private static final int MAX_PRODUCTS = 100;
     private static final Product[] products = new Product[MAX_PRODUCTS];
     private static int productCount = 0;
