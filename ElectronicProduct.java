@@ -24,4 +24,9 @@ public class ElectronicProduct extends Product {
     public void setWarrantyPeriod(String warrantyPeriod) {
         this.warrantyPeriod = warrantyPeriod;
     }
+    @Override
+    public void getProductInfo() {
+        super.getProductInfo();
+        System.out.printf("   Detail Elektronik -> Garansi: %s%n", warrantyPeriod);
+    }
 }
