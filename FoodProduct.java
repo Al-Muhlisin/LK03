@@ -24,4 +24,9 @@ public class FoodProduct extends Product {
     public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
     }
+    @Override
+    public void getProductInfo() {
+        super.getProductInfo();
+        System.out.printf("   Detail Makanan -> Tanggal Kedaluwarsa: %s%n", expiryDate);
+    }
 }
